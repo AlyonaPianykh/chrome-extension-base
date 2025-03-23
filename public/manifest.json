@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Privy",
+  "name": "Cat viewer extension",
   "version": "1.0.0",
-  "description": "Chrome extension with React,  TypeScript and offscreen",
+  "description": "Chrome extension with React, TypeScript and offscreen",
   "permissions": [
     "scripting",
-    "offscreen"
+    "offscreen",
+    "tabs"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -15,7 +16,6 @@
     "type": "module"
   },
   "action": {
-    "default_popup": "popup.html"
   },
   "content_scripts": [
     {
@@ -25,7 +25,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["offscreen.html"],
+      "resources": ["offscreen.html", "page.html"],
       "matches": ["<all_urls>"]
     }
   ]

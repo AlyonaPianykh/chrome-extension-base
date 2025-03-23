@@ -1,0 +1,1 @@
+export const CATS_GENERATOR_URL = 'https://alyonapianykh.github.io/chrome-extension-base/index.html';
