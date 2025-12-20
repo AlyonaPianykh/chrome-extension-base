@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
-import {CATS_GENERATOR_URL} from '../constants';
+import {CATS_GENERATOR_URL, MESSAGE_TOPICS} from '../constants';
 
 const Offscreen: React.FC = () => {
     const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -9,32 +9,38 @@ const Offscreen: React.FC = () => {
         console.log('Received message from page', message, sender, sendResponse);
 
         switch (message.type) {
-            case 'REQUEST_CANVAS_DATA':
+            case MESSAGE_TOPICS.REQUEST_CANVAS_DATA:
                 // todo: iframe send message
                 // sendResponse({ processing: true });
                 break;
-            case 'TOGGLE_STATE_CHANGE':
+            case MESSAGE_TOPICS.TOGGLE_STATE_CHANGE:
                 // setFeatureEnabled(message.data.enabled);
                 break;
 
         }
     };
 
-    useEffect(() => {
-        chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-            if (message.from === 'page') {
-                handleMessageFromPage(message, sender, sendResponse);
-            }
+    const pageEventListener = (message, sender, sendResponse) => {
+        if (message.from === 'page') {
+            handleMessageFromPage(message, sender, sendResponse);
+        }
 
-            return true;
-        });
+        return true;
+    }
+
+    useEffect(() => {
+        chrome.runtime.onMessage.addListener(pageEventListener);
 
         // Example of sending a message to the background script
         chrome.runtime.sendMessage({
             from: 'offscreen',
-            type: 'READY',
+            type: MESSAGE_TOPICS.OFFSCREEN_READY,
             data: { timestamp: Date.now() }
         });
+
+        return () => {
+            chrome.runtime.onMessage.removeListener(pageEventListener);
+        };
     }, []);
 
     return (

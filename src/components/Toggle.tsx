@@ -9,10 +9,11 @@ interface ToggleProps {
 const Toggle: React.FC<ToggleProps> = ({ label, checked, onChange }) => {
     return (
         <div className="toggle-container">
-            <label className="toggle-label">
-                <span>{label}</span>
+            <label className="toggle-label" htmlFor="toggle-checkbox">
+                <span className="label-text">{label}</span>
                 <div className="toggle-switch">
                     <input
+                        id="toggle-checkbox"
                         type="checkbox"
                         checked={checked}
                         onChange={(e) => onChange(e.target.checked)}
@@ -20,6 +21,7 @@ const Toggle: React.FC<ToggleProps> = ({ label, checked, onChange }) => {
                     <span className="toggle-slider"></span>
                 </div>
             </label>
+
         </div>
     );
 };

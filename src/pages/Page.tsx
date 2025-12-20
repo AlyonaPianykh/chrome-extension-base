@@ -3,38 +3,55 @@ import ReactDOM from 'react-dom/client';
 import Header from '../components/Header';
 import CanvasPreview from '../components/CanvasPreview';
 import Toggle from '../components/Toggle';
+import {MESSAGE_TOPICS} from "../constants";
+
 
 const Page: React.FC = () => {
     const [imageData, setImageData] = useState<string | null>(null);
     const [isEnabled, setIsEnabled] = useState(false);
+    const [isOffscreenReady, setIsOffscreenReady] = useState(false);
    // const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    const handleOffscreenMessage = (message, sender, sendResponse) => {
+        console.log('Page: Received message from chrome.runtime: ', message, sender, sendResponse);
+
+        switch (message.type) {
+            case MESSAGE_TOPICS.CANVAS_DATA:
+                setImageData(message.data);
+                sendResponse({ received: true });
+                break;
+            case MESSAGE_TOPICS.OFFSCREEN_READY:
+                console.log('Offscreen document is ready');
+                setIsOffscreenReady(true);
+                sendResponse({ received: true });
+                break;
+        }
+    }
+
+    const offscreenEventListener = (message, sender, sendResponse) => {
+        if (message.from === 'offscreen') {
+            handleOffscreenMessage(message, sender, sendResponse);
+        }
+
+        return true;
+    }
 
     useEffect(() => {
         // Setup listener for messages from the offscreen document
-        chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-            if (message.from === 'offscreen') {
-                handleOffscreenMessage(message, sender, sendResponse);
-            }
-
-            return true;
-        });
+        chrome.runtime.onMessage.addListener(offscreenEventListener);
 
         // Notify background script that the page is ready
         chrome.runtime.sendMessage({
             from: 'page',
-            type: 'PAGE_READY'
+            type: MESSAGE_TOPICS.PAGE_READY
         });
+
+        return () => {
+            chrome.runtime.onMessage.removeListener(offscreenEventListener);
+        };
     }, []);
 
-    const handleOffscreenMessage = (message, sender, sendResponse) => {
-        console.log('Received message', message, sender, sendResponse);
-        if (message.type === 'CANVAS_DATA') {
-            setImageData(message.data);
-            sendResponse({ received: true });
-        }
-    }
-
-    const sendMessage = (type: string, data?) => {
+    const sendRuntimeMessage = (type: string, data?) => {
         chrome.runtime.sendMessage({
             type,
             from: 'page',
@@ -44,14 +61,14 @@ const Page: React.FC = () => {
 
     // Request canvas data from offscreen document
     const handleGetImage = () => {
-        sendMessage('REQUEST_CANVAS_DATA');
+        sendRuntimeMessage(MESSAGE_TOPICS.REQUEST_CANVAS_DATA);
     };
 
     // Handle toggle state change
     const handleToggleChange = (checked: boolean) => {
         setIsEnabled(checked);
 
-        sendMessage('TOGGLE_STATE_CHANGE',  { enabled: checked });
+        sendRuntimeMessage(MESSAGE_TOPICS.TOGGLE_STATE_CHANGE,  { enabled: checked });
     };
 
     return (
@@ -59,6 +76,7 @@ const Page: React.FC = () => {
             <Header title="Extension Page" />
 
             <main className="page-content">
+                <h4>Offscreen is {isOffscreenReady ? 'ready' : 'not ready yet'}.</h4>
                 <div className="controls-section">
                     <button
                         className="fetch-button"

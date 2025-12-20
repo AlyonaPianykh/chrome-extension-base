@@ -25,7 +25,6 @@ const copyStaticFiles = () => {
 
                 // Copy HTML files with better error handling
                 const htmlFiles = [
-                    ['popup.html', 'dist/popup.html'],
                     ['offscreen.html', 'dist/offscreen.html'],
                     ['page.html', 'dist/page.html']
                 ];
@@ -58,11 +57,11 @@ export default defineConfig({
     build: {
         rollupOptions: {
             input: {
-                popup: resolve(__dirname, 'src/popup/Popup.tsx'),
                 offscreen: resolve(__dirname, 'src/offscreen/Offscreen.tsx'),
                 page: resolve(__dirname, 'src/pages/Page.tsx'),
                 background: resolve(__dirname, 'src/background.ts'),
-                content: resolve(__dirname, 'src/content.ts')
+                'iframe-content': resolve(__dirname, 'src/iframe-content.ts'),
+                'iframe-injection': resolve(__dirname, 'src/injection/iframe-injection.ts')
             },
             output: {
                 entryFileNames: '[name].js',

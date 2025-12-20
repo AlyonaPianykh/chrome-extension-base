@@ -31,8 +31,8 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
     if (message.from === 'offscreen') {
         console.log('Received message from offscreen document:', message);
         sendResponse({ received: true });
+        return true;
     }
-
 
     return true;
 });

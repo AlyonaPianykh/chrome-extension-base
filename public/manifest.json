@@ -19,13 +19,14 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "matches": ["https://alyonapianykh.github.io/*"],
+      "js": ["iframe-content.js"],
+      "all_frames": true
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["offscreen.html", "page.html"],
+      "resources": ["offscreen.html", "page.html", "iframe-injection.js"],
       "matches": ["<all_urls>"]
     }
   ]
