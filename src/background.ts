@@ -27,12 +27,12 @@ chrome.action.onClicked.addListener((event) => {
     chrome.tabs.create({ url: chrome.runtime.getURL("page.html") });
 });
 
-chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
-    if (message.from === 'offscreen') {
-        console.log('Received message from offscreen document:', message);
-        sendResponse({ received: true });
-        return true;
-    }
-
-    return true;
-});
+// chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
+//     if (message.from === 'offscreen') {
+//         console.log('Received message from offscreen document:', message);
+//         sendResponse({ received: true });
+//         return true;
+//     }
+//
+//     return true;
+// });

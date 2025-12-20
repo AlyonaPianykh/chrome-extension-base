@@ -18,6 +18,7 @@ const Page: React.FC = () => {
         switch (message.type) {
             case MESSAGE_TOPICS.CANVAS_DATA:
                 setImageData(message.data);
+                console.log('Page: Received canvas data from offscreen document:', message.data);
                 sendResponse({ received: true });
                 break;
             case MESSAGE_TOPICS.OFFSCREEN_READY:

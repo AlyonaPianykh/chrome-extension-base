@@ -11,7 +11,16 @@ const Offscreen: React.FC = () => {
         switch (message.type) {
             case MESSAGE_TOPICS.REQUEST_CANVAS_DATA:
                 // todo: iframe send message
-                // sendResponse({ processing: true });
+                sendResponse({ processing: true });
+
+                // it is a test
+                setTimeout(() => {
+                    chrome.runtime.sendMessage({
+                        from: 'offscreen',
+                        type: MESSAGE_TOPICS.CANVAS_DATA,
+                        data: { image: 'test' }
+                    });
+                }, 2000)
                 break;
             case MESSAGE_TOPICS.TOGGLE_STATE_CHANGE:
                 // setFeatureEnabled(message.data.enabled);
