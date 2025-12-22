@@ -17,11 +17,12 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ imageData }) => {
                 img.onload = () => {
                     // Clear canvas
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-                    // Draw image on canvas
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 };
-                img.src = imageData;
+                img.onerror = (error) => {
+                    console.error('Failed to load image:', error);
+                };
+                img.src = "data:image/png;base64," + imageData;
             }
         }
     }, [imageData]);

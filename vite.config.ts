@@ -1,7 +1,37 @@
-import {defineConfig} from 'vite';
+import {defineConfig, build} from 'vite';
 import react from '@vitejs/plugin-react';
 import {resolve} from 'path';
 import { writeFileSync, mkdirSync, copyFileSync, existsSync, readFileSync } from 'fs';
+
+// Plugin to build file a standalone IIFE bundle
+const buildIIFE = (fileName: string) => {
+    const outputFileName = fileName.split('/').pop()?.replace(/\.(ts|tsx|js|jsx)$/, '.js') || 'output.js';
+    return {
+        name: 'build-iife-bundle',
+        async closeBundle() {
+            console.log(`Building ${outputFileName} as standalone IIFE...`);
+            await build({
+                configFile: false,
+                build: {
+                    emptyOutDir: false,
+                    lib: {
+                        entry: resolve(__dirname, fileName),
+                        name: 'IframeInjection',
+                        formats: ['iife'],
+                        fileName: () => outputFileName
+                    },
+                    outDir: 'dist',
+                    rollupOptions: {
+                        output: {
+                            inlineDynamicImports: true
+                        }
+                    }
+                }
+            });
+            console.log(`${outputFileName} built successfully`);
+        }
+    };
+};
 
 const copyStaticFiles = () => {
     return {
@@ -53,15 +83,13 @@ const copyStaticFiles = () => {
 };
 
 export default defineConfig({
-    plugins: [react(), copyStaticFiles()],
+    plugins: [react(), copyStaticFiles(), buildIIFE('src/iframeContent.ts')],
     build: {
         rollupOptions: {
             input: {
-                offscreen: resolve(__dirname, 'src/offscreen/Offscreen.tsx'),
+                offscreen: resolve(__dirname, 'src/offscreen/offscreen.ts'),
                 page: resolve(__dirname, 'src/pages/Page.tsx'),
-                background: resolve(__dirname, 'src/background.ts'),
-                'iframe-content': resolve(__dirname, 'src/iframe-content.ts'),
-                'iframe-injection': resolve(__dirname, 'src/injection/iframe-injection.ts')
+                background: resolve(__dirname, 'src/background.ts')
             },
             output: {
                 entryFileNames: '[name].js',

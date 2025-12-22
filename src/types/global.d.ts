@@ -1,7 +1,11 @@
 declare global {
     interface Window {
-        __parentCommunicator?: any;
-        __Interaction?: any;
+        __parentCommunicator?: {
+            sendMessageToParent: (message: any) => void;
+        };
+        __Interaction?: {
+            getImageData: (canvasSelector: string) => string | null;
+        };
     }
 }
 

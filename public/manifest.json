@@ -20,13 +20,15 @@
   "content_scripts": [
     {
       "matches": ["https://alyonapianykh.github.io/*"],
-      "js": ["iframe-content.js"],
-      "all_frames": true
+      "js": ["iframeContent.js"],
+      "all_frames": true,
+      "world": "MAIN",
+      "run_at": "document_start"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["offscreen.html", "page.html", "iframe-injection.js"],
+      "resources": ["offscreen.html", "page.html"],
       "matches": ["<all_urls>"]
     }
   ]
