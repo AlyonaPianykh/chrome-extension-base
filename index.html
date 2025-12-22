@@ -97,6 +97,7 @@
                 img.onerror = () => reject(new Error('Failed to load cat image'));
             });
 
+            img.crossOrigin = "anonymous";
             img.src = imageUrl;
             catImage = await imageLoadPromise;
             isLoading = false;
