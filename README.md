@@ -3,7 +3,7 @@
 It is aimed to display a problem of blank (empty) canvas rendered inside iframe inside chrome.offscreen using rendering technique with requestAnimationFrame.
 
 ### demo site
-In the branch `cats-viewer` there is a small demo site that is also available here https://alyonapianykh.github.io/chrome-extension-base/index.html. 
+In the branch `cats-viewer` there is a small demo site that is also available here https://alyonapianykh.github.io/demo-chrome-extension-rAF-canvas-offscreen/. 
 It displays random cat picture. Rendering is done using canvas and requestAnimationFrame to give "fade" animation effect.
 
 ### demo extension

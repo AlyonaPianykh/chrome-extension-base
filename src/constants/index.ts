@@ -1,4 +1,4 @@
-export const CATS_GENERATOR_URL = 'https://alyonapianykh.github.io/chrome-extension-base/index.html';
+export const CATS_GENERATOR_URL = 'https://alyonapianykh.github.io/demo-chrome-extension-rAF-canvas-offscreen/';
 
 
 export const MESSAGE_TOPICS = {

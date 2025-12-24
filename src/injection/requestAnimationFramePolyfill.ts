@@ -1,7 +1,7 @@
 /** requestAnimationFramePolyfill
- * is forcing override of the requestAnimationFrame method implementation with setTimeout version
+ * is forcing override of the requestAnimationFrame method implementation with setTimeout version.
  * it is needed to overcome the issue when image on canvas is not rendered in the chrome.offscreen.
- * image is rendered inside requestAnimationFrame for optimisation purposes, which is common widely-used practice.
+ * image is rendered inside requestAnimationFrame for optimization purposes, which is common widely-used practice.
  * The rendering got paused when inside the offscreen
  */
 const originalRequestAnimationFrame = window.requestAnimationFrame;
