@@ -9,9 +9,7 @@ import {MESSAGE_TOPICS} from "../constants";
 const Page: React.FC = () => {
     const [imageData, setImageData] = useState<string | null>(null);
     const [isEnabled, setIsEnabled] = useState(false);
-    const [isOffscreenReady, setIsOffscreenReady] = useState(false);
     const [iframeLoadedTimestamp, setIframeLoadedTimestamp] = useState<number | null>(null);
-    // const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const formatTimestamp = (timestamp: number): string => {
         return new Date(timestamp).toLocaleString();
@@ -23,11 +21,6 @@ const Page: React.FC = () => {
                 const {image} = message.data;
                 setImageData(image);
                 console.log('Page: Received canvas data from offscreen document:', message.data);
-                sendResponse({received: true});
-                break;
-            case MESSAGE_TOPICS.OFFSCREEN_READY:
-                console.log('Offscreen document is ready');
-                setIsOffscreenReady(true);
                 sendResponse({received: true});
                 break;
             case MESSAGE_TOPICS.IFRAME_LOADED:
@@ -58,14 +51,12 @@ const Page: React.FC = () => {
         // Setup listener for messages from the offscreen document
         chrome.runtime.onMessage.addListener(offscreenEventListener);
 
-        //todo: reset local storage flag for RAF override on page load for testing
-
         // Initialize the cats iframe in offscreen document
         sendRuntimeMessage(MESSAGE_TOPICS.INIT_CATS_IFRAME);
 
         // Notify background script that the page is ready
         sendRuntimeMessage(MESSAGE_TOPICS.PAGE_READY);
-        handleToggleChange(false);
+        handleToggleRAFPolyfill(false);
 
         return () => {
             chrome.runtime.onMessage.removeListener(offscreenEventListener);
@@ -81,20 +72,20 @@ const Page: React.FC = () => {
 
     // Trigger iframe refresh to get a new cat
     const handleNewCat = () => {
-        sendRuntimeMessage(MESSAGE_TOPICS.REFRESH_CATS_IFRAME, {params: {canvasSelector: '#catCanvas'}}, (data) => {
+        sendRuntimeMessage(MESSAGE_TOPICS.REFRESH_CATS_IFRAME, {}, (data) => {
             if (data?.refreshed) {
                 setTimeout(() => {
                     handleGetImage();
-                }, 500);
+                }, 1000);
             }
         });
     };
 
     // Handle toggle state change
-    const handleToggleChange = (checked: boolean) => {
+    const handleToggleRAFPolyfill = (checked: boolean) => {
         setIsEnabled(checked);
 
-        sendRuntimeMessage(MESSAGE_TOPICS.TOGGLE_STATE_CHANGE, {enabled: checked});
+        sendRuntimeMessage(MESSAGE_TOPICS.TOGGLE_RAF_POLYFILL, {enabled: checked});
     };
 
     return (
@@ -102,7 +93,6 @@ const Page: React.FC = () => {
             <Header title="Extension Page"/>
 
             <main className="page-content">
-                <h4>Offscreen is {isOffscreenReady ? 'ready' : 'not ready yet'}.</h4>
                 {iframeLoadedTimestamp && (
                     <div className="iframe-notification">
                         Iframe reloaded {formatTimestamp(iframeLoadedTimestamp)}
@@ -125,9 +115,9 @@ const Page: React.FC = () => {
                         </button>
                     </div>
                     <Toggle
-                        label="Enable Feature"
+                        label="Override requestAnimationFrame"
                         checked={isEnabled}
-                        onChange={handleToggleChange}
+                        onChange={handleToggleRAFPolyfill}
                     />
                 </div>
 
@@ -150,7 +140,6 @@ const Page: React.FC = () => {
     );
 };
 
-// Create root and render
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <Page/>

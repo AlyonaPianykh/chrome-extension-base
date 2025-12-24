@@ -83,7 +83,7 @@ const copyStaticFiles = () => {
 };
 
 export default defineConfig({
-    plugins: [react(), copyStaticFiles(), buildIIFE('src/iframeContent.ts')],
+    plugins: [react(), copyStaticFiles(), buildIIFE('src/content-scripts/iframeContent.ts')],
     build: {
         rollupOptions: {
             input: {

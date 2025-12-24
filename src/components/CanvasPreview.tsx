@@ -15,7 +15,6 @@ const CanvasPreview: React.FC<CanvasPreviewProps> = ({ imageData }) => {
             if (ctx) {
                 const img = new Image();
                 img.onload = () => {
-                    // Clear canvas
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 };

@@ -21,7 +21,6 @@ const Toggle: React.FC<ToggleProps> = ({ label, checked, onChange }) => {
                     <span className="toggle-slider"></span>
                 </div>
             </label>
-
         </div>
     );
 };

@@ -1,24 +1,12 @@
-// // When extension is installed or updated
-// chrome.runtime.onInstalled.addListener(() => {
-//     setupOffscreenDocument();
-// });
-//
-// // When browser starts (for already installed extensions)
-// chrome.runtime.onStartup.addListener(() => {
-//     setupOffscreenDocument();
-// });
+// When extension is installed or updated
+chrome.runtime.onInstalled.addListener(() => {
+    ensureOffscreenDocument();
+});
 
-// Keep service worker alive and ensure offscreen document exists
-// This helps when service worker wakes up from being idle
-// chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
-//     // Ensure offscreen document exists when messages come in
-//     if (message.from === 'page') {
-//         ensureOffscreenDocument().then(() => {
-//             // Forward to offscreen or handle here
-//         });
-//     }
-//     return true;
-// });
+// When browser starts (for already installed extensions)
+chrome.runtime.onStartup.addListener(() => {
+    ensureOffscreenDocument();
+});
 
 async function ensureOffscreenDocument() {
     try {
@@ -60,13 +48,3 @@ ensureOffscreenDocument();
 chrome.action.onClicked.addListener(() => {
     chrome.tabs.create({ url: chrome.runtime.getURL("page.html") });
 });
-
-// chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
-//     if (message.from === 'offscreen') {
-//         console.log('Received message from offscreen document:', message);
-//         sendResponse({ received: true });
-//         return true;
-//     }
-//
-//     return true;
-// });

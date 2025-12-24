@@ -3,7 +3,7 @@ declare global {
         __parentCommunicator?: {
             sendMessageToParent: (message: any) => void;
         };
-        __Interaction?: {
+        __DomInteraction?: {
             getImageData: (canvasSelector: string) => string | null;
         };
     }

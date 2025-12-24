@@ -23,7 +23,7 @@ export const getIframeCommunicationWithParentWindow = () => {
         const { data } = event;
         switch (data.type) {
             case MESSAGE_TOPICS.REQUEST_CANVAS_DATA: {
-                const canvasData = window.__Interaction?.getImageData(data.params.canvasSelector);
+                const canvasData = window.__DomInteraction?.getImageData(data.params.canvasSelector);
                 sendMessageToParent({
                     type: MESSAGE_TOPICS.CANVAS_DATA,
                     data: { image: canvasData }
@@ -31,17 +31,16 @@ export const getIframeCommunicationWithParentWindow = () => {
                 break;
             }
             case MESSAGE_TOPICS.OVERRIDE_REQUEST_ANIMATION_FRAME: {
-                localStorage.setItem('forceOverrideRAF', JSON.stringify(data.params.forceOverride));
+                console.log('Iframe: Setting forceOverrideRAF to', data.params.forceOverride);
+                sessionStorage.setItem('forceOverrideRAF', JSON.stringify(data.params.forceOverride));
                 window.location.reload();
                 break;
             }
             case MESSAGE_TOPICS.CLEAR_FORCE_OVERRIDE_RAF: {
-                localStorage.removeItem('forceOverrideRAF');
+                sessionStorage.removeItem('forceOverrideRAF');
                 break;
             }
         }
-        //todo: process messages from parent
-        console.log('Iframe received message from parent:', event);
     }
 
     window.addEventListener('message', listener);
@@ -51,8 +50,8 @@ export const getIframeCommunicationWithParentWindow = () => {
     };
 }
 
-export const initInteraction = () => {
-    window.__Interaction = {
+export const initDomInteraction = () => {
+    window.__DomInteraction = {
         getImageData: (canvasSelector: string): string | null => {
             const srcCanvas = document.querySelector(canvasSelector) as HTMLCanvasElement | null;
 
@@ -60,29 +59,26 @@ export const initInteraction = () => {
                  return null;
             }
 
-            const finalWidth = srcCanvas.width;
-            const finalHeight = srcCanvas.height;
+            const { width: canvasWidth, height: canvasHeight } = srcCanvas;
 
-            if (finalWidth === 0 || finalHeight === 0) {
+            if (canvasWidth === 0 || canvasHeight === 0) {
                 console.log('getImageData: Canvas has zero dimensions');
                 return null;
             }
 
             try {
-                const tmpcanvas = document.createElement('canvas');
-                tmpcanvas.width = finalWidth;
-                tmpcanvas.height = finalHeight;
-                const tmpctx = tmpcanvas.getContext('2d');
-                if (!(tmpctx instanceof CanvasRenderingContext2D)) {
+                const tmpCanvas = document.createElement('canvas');
+                tmpCanvas.width = canvasWidth;
+                tmpCanvas.height = canvasHeight;
+                const tmpCtx = tmpCanvas.getContext('2d');
+                if (!(tmpCtx instanceof CanvasRenderingContext2D)) {
                     console.log('getImageData: Could not get 2d context');
                     return null;
                 }
 
-                tmpctx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height, 0, 0, tmpcanvas.width, tmpcanvas.height);
+                tmpCtx.drawImage(srcCanvas, 0, 0, canvasWidth, canvasHeight, 0, 0, tmpCanvas.width, tmpCanvas.height);
 
-                const dataUrl = tmpcanvas.toDataURL();
-
-                return dataUrl.replace(/^data:image\/?[A-Za-z]*;base64,/, '')
+                return tmpCanvas.toDataURL().replace(/^data:image\/?[A-Za-z]*;base64,/, '')
             } catch (e) {
                 console.error('Error getting image data from canvas:', e);
                 return null;
