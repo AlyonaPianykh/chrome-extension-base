@@ -40,6 +40,12 @@ export const getIframeCommunicationWithParentWindow = () => {
                 sessionStorage.removeItem('forceOverrideRAF');
                 break;
             }
+
+            case MESSAGE_TOPICS.BUTTON_CLICK: {
+                const success = window.__DomInteraction?.buttonClick(data.params.buttonSelector);
+                console.log('Iframe: Button click result:', success);
+                break;
+            }
         }
     }
 
@@ -85,6 +91,15 @@ export const initDomInteraction = () => {
             }
         },
 
+        buttonClick: (buttonSelector: string): boolean => {
+            const button = document.querySelector(buttonSelector) as HTMLElement | null;
+            if (!button) {
+                console.log('buttonClick: Button not found with selector:', buttonSelector);
+                return false;
+            }
+            button.click();
+            return true;
+        },
     }
 }
 

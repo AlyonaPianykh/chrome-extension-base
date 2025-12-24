@@ -5,6 +5,7 @@ declare global {
         };
         __DomInteraction?: {
             getImageData: (canvasSelector: string) => string | null;
+            buttonClick: (buttonSelector: string) => boolean;
         };
     }
 }

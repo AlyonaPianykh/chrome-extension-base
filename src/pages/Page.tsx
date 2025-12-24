@@ -72,7 +72,7 @@ const Page: React.FC = () => {
 
     // Trigger iframe refresh to get a new cat
     const handleNewCat = () => {
-        sendRuntimeMessage(MESSAGE_TOPICS.REFRESH_CATS_IFRAME, {}, (data) => {
+        sendRuntimeMessage(MESSAGE_TOPICS.BUTTON_CLICK, {params: {buttonSelector: '#refresh-btn'}}, (data) => {
             if (data?.refreshed) {
                 setTimeout(() => {
                     handleGetImage();

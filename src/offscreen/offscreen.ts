@@ -49,14 +49,6 @@ const createOffscreenManager = () => {
         }
     }
 
-    const refreshCatsIframe = () =>  {
-        console.log('Offscreen: Refreshing cats iframe');
-        if (iframe) {
-            // Force iframe reload by re-assigning src
-            iframe.src = iframe.src + '?t=' + Date.now();
-        }
-    }
-
     /* End of Iframe Management */
 
     /* Messaging with iframe */
@@ -89,29 +81,32 @@ const createOffscreenManager = () => {
         switch (message.type) {
             case MESSAGE_TOPICS.INIT_CATS_IFRAME:
                 initCatsIframe();
-                sendResponse({ initialized: true });
+                sendResponse({initialized: true});
                 break;
             case MESSAGE_TOPICS.DESTROY_CATS_IFRAME:
                 destroyCatsIframe();
-                sendResponse({ destroyed: true });
-                break;
-            case MESSAGE_TOPICS.REFRESH_CATS_IFRAME:
-                refreshCatsIframe();
-                sendResponse({ refreshed: true });
+                sendResponse({destroyed: true});
                 break;
             case MESSAGE_TOPICS.REQUEST_CANVAS_DATA:
                 sendMessageToIframe({
                     type: MESSAGE_TOPICS.REQUEST_CANVAS_DATA,
                     params: message.data.params
                 });
-                sendResponse({ processing: true });
+                sendResponse({processing: true});
                 break;
             case MESSAGE_TOPICS.TOGGLE_RAF_POLYFILL:
                 sendMessageToIframe({
                     type: MESSAGE_TOPICS.OVERRIDE_REQUEST_ANIMATION_FRAME,
-                    params: { forceOverride: message.data.enabled }
+                    params: {forceOverride: message.data.enabled}
                 });
-                sendResponse({ received: true });
+                sendResponse({received: true});
+                break;
+            case MESSAGE_TOPICS.BUTTON_CLICK:
+                sendMessageToIframe({
+                    type: MESSAGE_TOPICS.BUTTON_CLICK,
+                    params: message.data.params
+                });
+                sendResponse({refreshed: true});
                 break;
         }
     };
